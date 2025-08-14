@@ -10,7 +10,9 @@ namespace HireTech.API.Extensions
             // Repository 
             service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             // Unit of work
-            service.AddScoped<IUnitOfWork, IUnitOfWork>();
+            service.AddScoped<IUnitOfWork, UnitOfWork>();
+            //AutoMapper
+            service.AddAutoMapper(typeof(MappingProfile));
         }
     }
 }

@@ -10,10 +10,11 @@ namespace HireTech.Repository.Data
 {
     public class HireTechDbContext : DbContext
     {
-        protected HireTechDbContext(DbContextOptions options):base(options)
+        public HireTechDbContext(DbContextOptions options):base(options)
         {
+            
         }
-        //Company Dbset 
+        //Dbset Company 
         public DbSet<Company> Companies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
