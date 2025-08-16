@@ -14,6 +14,8 @@ namespace HireTech.Core.Entities
         public string  Website { get; set; }
         public string  Description { get; set; }
         //will be an FK to user who created id 
+        public string  CreatedById  { get; set; }
+        public User CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

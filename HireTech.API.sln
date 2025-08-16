@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36127.28 d17.14
+VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HireTech.API", "HireTech.API\HireTech.API.csproj", "{9F619D4F-6133-47F7-BC6B-C4469A6DD74F}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HireTech.Repository", "HireTech.Repository\HireTech.Repository.csproj", "{AEF9BEE8-4B60-4978-AAD6-04114B014407}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HireTech.Uitilities", "HireTech.Uitilities\HireTech.Uitilities.csproj", "{C2142D92-828E-4E02-9350-A55078B6B349}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HireTech.Service", "HireTech.Service\HireTech.Service.csproj", "{25BC3821-542B-478E-9118-C9536D76A99B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C2142D92-828E-4E02-9350-A55078B6B349}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2142D92-828E-4E02-9350-A55078B6B349}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2142D92-828E-4E02-9350-A55078B6B349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25BC3821-542B-478E-9118-C9536D76A99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25BC3821-542B-478E-9118-C9536D76A99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25BC3821-542B-478E-9118-C9536D76A99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25BC3821-542B-478E-9118-C9536D76A99B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

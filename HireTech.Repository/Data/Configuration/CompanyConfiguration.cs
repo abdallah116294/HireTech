@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +32,13 @@ namespace HireTech.Repository.Data.Configuration
             //Industry
             entity.Property(c=>c.Industry).HasColumnType("nvarchar(200)")
                 .IsRequired();
-         
+            entity
+    .HasOne(c => c.CreatedBy)
+    .WithMany(u => u.CompaniesCreated)
+    .HasForeignKey(c => c.CreatedById)
+    .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }

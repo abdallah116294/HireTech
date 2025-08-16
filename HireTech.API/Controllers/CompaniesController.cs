@@ -3,6 +3,7 @@ using HireTech.Core.Entities;
 using HireTech.Core.IRepositories;
 using HireTech.Uitilities.DTO;
 using HireTech.Uitilities.DTO.Company;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace HireTech.API.Controllers
@@ -48,6 +49,7 @@ namespace HireTech.API.Controllers
             }
         }
         //View Company Card  //get By it's Id
+        [Authorize(Roles = "CANDIDATE")]
         [HttpGet("GetCompanyById{id}")]
         public async Task<IActionResult> GetCompanyDetailsById(int id) 
         {
