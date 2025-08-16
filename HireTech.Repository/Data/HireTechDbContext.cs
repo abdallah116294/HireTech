@@ -19,6 +19,11 @@ namespace HireTech.Repository.Data
 
         //Dbset Company 
         public DbSet<Company> Companies { get; set; }
+        //Dbset Vancy
+        public DbSet<Vacancy> Vacancies { get; set; }
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<EventNote> Events { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

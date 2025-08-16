@@ -16,6 +16,8 @@ namespace HireTech.Core.Entities
         //will be an FK to user who created id 
         public string  CreatedById  { get; set; }
         public User CreatedBy { get; set; }
+        public ICollection<Vacancy> Vacancies { get; set; }
+       // public ICollection<EventNote> Events { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

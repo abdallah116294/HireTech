@@ -15,5 +15,8 @@ namespace HireTech.Core.Entities
         //Navigation Properties 
         //Company 
         public ICollection<Company> CompaniesCreated { get; set; }
+        //Vancy Created
+        public ICollection<Vacancy> VacanciesCreated { get; set; }
+        public ICollection<EventNote> EventsCreated { get; set; }
     }
 }

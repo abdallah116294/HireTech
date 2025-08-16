@@ -49,7 +49,7 @@ namespace HireTech.API.Controllers
             }
         }
         //View Company Card  //get By it's Id
-        [Authorize(Roles = "CANDIDATE")]
+        //[Authorize(Roles = "CANDIDATE")]
         [HttpGet("GetCompanyById{id}")]
         public async Task<IActionResult> GetCompanyDetailsById(int id) 
         {
