@@ -27,6 +27,8 @@ namespace HireTech.API.Extensions
             service.AddTransient<TokenHelper>();
             service.AddScoped<IUserService, UserService>();
             service.AddScoped<RoleSeederService>();
+            service.AddScoped<IRoleRepository, RoleRepository>();
+            service.AddScoped<IRoleService, RoleService>();
         }
     }
 }

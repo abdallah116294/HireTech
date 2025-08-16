@@ -47,6 +47,18 @@ namespace HireTech.API.Controllers
             var response = await _userService.RegisterAsync(dto, "Candidate");
             return CreateResponse(response);
         }
+        [HttpPost("register-recruiter")]
+        public async Task<IActionResult> AddRecuiter([FromBody] RegisterDTO dto)
+        {
+            var response = await _userService.RegisterAsync(dto, "Recruiter");
+            return CreateResponse(response);
+        }
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> AddAdmin([FromBody] RegisterDTO dto)
+        {
+            var response = await _userService.RegisterAsync(dto, "ADMIN");
+            return CreateResponse(response);
+        }
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutAsync()
         {

@@ -6,6 +6,7 @@ using HireTech.Uitilities.DTO.Company;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 namespace HireTech.API.Controllers
 {
     [Route("api/companies")]
@@ -20,16 +21,31 @@ namespace HireTech.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        [Authorize(Roles = "RECRUITER")]
         [HttpPost("CreateCompany")]
-        public async Task<IActionResult> CreateCompany(CreateCompanyDTO company) 
+        public async Task<IActionResult> CreateCompany(CreateCompanyDTO dto) 
         {
             try
             {
-                
+                var userId = User.FindFirstValue("id"); // logged-in user ID
+                Console.WriteLine(userId);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { message = "User is not logged in" });
+
                 var companyRepo = _unitOfWork.Repository<Company>();
-                var mappedCompany =_mapper.Map<Company>(company);
+                var mappedCompany =_mapper.Map<Company>(dto);
                 mappedCompany.CreatedAt = DateTime.UtcNow;
-                await companyRepo.AddAsync(mappedCompany);
+
+                var company = new Company
+                {
+                    Name = dto.Name,
+                    Industry = dto.Industry,
+                    Website = dto.Website,
+                    Description = dto.Description,
+                    CreatedById = userId,
+                    CreatedAt=DateTime.UtcNow,
+                };
+                await companyRepo.AddAsync(company);
                 await _unitOfWork.CompleteAsync();
                 return CreateResponse(new ResponseDTO<object> 
                 {
@@ -49,7 +65,7 @@ namespace HireTech.API.Controllers
             }
         }
         //View Company Card  //get By it's Id
-        //[Authorize(Roles = "CANDIDATE")]
+        [Authorize(Roles = "CANDIDATE,RECRUITER")]
         [HttpGet("GetCompanyById{id}")]
         public async Task<IActionResult> GetCompanyDetailsById(int id) 
         {

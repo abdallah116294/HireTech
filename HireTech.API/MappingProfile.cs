@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HireTech.Core.Entities;
 using HireTech.Uitilities.DTO.Company;
+using HireTech.Uitilities.DTO.Vacancy;
 
 namespace HireTech.API
 {
@@ -12,6 +13,8 @@ namespace HireTech.API
             //1.Create Company 
             CreateMap<Company, CreateCompanyDTO>().ReverseMap();
             CreateMap<Company, UpdateCompanyDTO>().ReverseMap();
+            //Vacancy
+            CreateMap<Vacancy,CreateVacancyDTO>().ReverseMap();
         }
     }
 }
