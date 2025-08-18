@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HireTech.Core.Entities;
+using HireTech.Core.Specifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,12 @@ namespace HireTech.Core.IRepositories
 {
     public interface IGenericRepository<T>where T : class
     {
+        #region Specification
+        Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecifications<T> Spec);
+        Task<T> GetByIdWithSpecAsync(ISpecifications<T> Spec);
+        #endregion
         //Get all
-         Task<List<T>> GetAllAsync();
+        Task<List<T>> GetAllAsync();
         //Get By Id
         Task<T> GetByIdAsync(int id);
         // Set

@@ -1,4 +1,5 @@
-﻿using HireTech.Core.IRepositories;
+﻿using HireTech.Core.Entities;
+using HireTech.Core.IRepositories;
 using HireTech.Repository.Data;
 using System;
 using System.Collections.Generic;

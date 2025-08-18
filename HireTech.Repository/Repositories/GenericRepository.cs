@@ -1,4 +1,6 @@
-﻿using HireTech.Core.IRepositories;
+﻿using HireTech.Core.Entities;
+using HireTech.Core.IRepositories;
+using HireTech.Core.Specifications;
 using HireTech.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,13 +37,25 @@ namespace HireTech.Repository.Repositories
             return entities;
         }
 
+        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecifications<T> Spec)
+        {
+           return await ApplaySpecification(Spec).ToListAsync();
+        }
+
         public async Task<T> GetByIdAsync(int id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             return entity;
         }
+        private IQueryable<T> ApplaySpecification(ISpecifications<T> spec)
+        {
+            return SpecificationEvalutor<T>.GetQuery(_context.Set<T>(), spec);
+        }
 
-    
+        public async Task<T> GetByIdWithSpecAsync(ISpecifications<T> Spec)
+        {
+            return await ApplaySpecification(Spec).FirstOrDefaultAsync();
+        }
 
         public async Task UpdateAsync(int id, Action<T> updateAction)
         {

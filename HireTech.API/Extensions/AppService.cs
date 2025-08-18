@@ -4,7 +4,9 @@ using HireTech.Repository.Repositories;
 using HireTech.Service.UserService;
 using HireTech.Uitilities.DTO.User;
 using HireTech.Uitilities.Helpers;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json.Serialization;
 
 namespace HireTech.API.Extensions
 {
@@ -29,6 +31,11 @@ namespace HireTech.API.Extensions
             service.AddScoped<RoleSeederService>();
             service.AddScoped<IRoleRepository, RoleRepository>();
             service.AddScoped<IRoleService, RoleService>();
+            service.Configure<JsonOptions>(options =>
+            {
+                options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
         }
     }
 }
