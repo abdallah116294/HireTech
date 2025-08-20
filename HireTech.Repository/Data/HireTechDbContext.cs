@@ -23,7 +23,9 @@ namespace HireTech.Repository.Data
         public DbSet<Vacancy> Vacancies { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<EventNote> Events { get; set; }
-
+        //Profile
+        public DbSet<CandidateProfile> CandidateProfiles { get; set; }
+        public DbSet<Skill> Skills { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

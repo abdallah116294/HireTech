@@ -82,7 +82,7 @@ namespace HireTech.Repository.Repositories
             }
             var user = new User
             {
-                UserName = string.Join(dto.FirstName, dto.LastName),
+                UserName = dto.Email.ToUpper(),
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 FullName = dto.FirstName + " " + dto.LastName,

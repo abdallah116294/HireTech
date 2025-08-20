@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HireTech.Core.Entities;
 using HireTech.Core.IRepositories;
+using HireTech.Core.Specifications;
 using HireTech.Uitilities.DTO;
 using HireTech.Uitilities.DTO.Company;
 using Microsoft.AspNetCore.Authorization;
@@ -71,10 +72,11 @@ namespace HireTech.API.Controllers
         {
             try
             {
+                var spec = new CompanyWithSpecification(id);
                 var companyRepo=_unitOfWork.Repository<Company>();
                 if (id == null)
                     return CreateResponse(new ResponseDTO<object> {IsSuccess=false,Message="Id is Null",ErrorCode=ErrorCodes.BadRequest });
-                var companyById=await companyRepo.GetByIdAsync(id);
+                var companyById=await companyRepo.GetByIdWithSpecAsync(spec);
                 if (companyById == null)
                     return CreateResponse(new ResponseDTO<object> {IsSuccess=false,Message="No Company Found",ErrorCode=ErrorCodes.NotFound});
                 return CreateResponse(new ResponseDTO<object> {IsSuccess=true,Message="Get Company Details Succesful",Data=companyById });
@@ -133,8 +135,9 @@ namespace HireTech.API.Controllers
         {
             try
             {
+                var spec = new CompanyWithSpecification();
                 var companyRepo= _unitOfWork.Repository<Company>();
-                var companies=await companyRepo.GetAllAsync();
+                var companies=await companyRepo.GetAllWithSpecAsync(spec);
                 var searchedCompany = companies.Where(c => c.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
                 if (searchedCompany == null)
                     return CreateResponse(new ResponseDTO<object> { IsSuccess = true, Message = "No Company Found", ErrorCode = ErrorCodes.NotFound });

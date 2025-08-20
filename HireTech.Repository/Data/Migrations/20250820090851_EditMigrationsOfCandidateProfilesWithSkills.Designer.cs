@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HireTech.Repository.Data.Migrations
 {
     [DbContext(typeof(HireTechDbContext))]
-    [Migration("20250816111219_VacancyAndApplicationsAndEventsDB")]
-    partial class VacancyAndApplicationsAndEventsDB
+    [Migration("20250820090851_EditMigrationsOfCandidateProfilesWithSkills")]
+    partial class EditMigrationsOfCandidateProfilesWithSkills
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,9 @@ namespace HireTech.Repository.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -50,9 +53,89 @@ namespace HireTech.Repository.Data.Migrations
 
                     b.HasIndex("CandidateId");
 
+                    b.HasIndex("CandidateProfileId");
+
                     b.HasIndex("VacancyId");
 
                     b.ToTable("Applications", (string)null);
+                });
+
+            modelBuilder.Entity("HireTech.Core.Entities.CandidateProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentCompany")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CurrentJobTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("CurrentSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("ExpectedSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("GraduationYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HighestQualification")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LinkedInProfile")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PortfolioUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("CandidateProfiles", (string)null);
                 });
 
             modelBuilder.Entity("HireTech.Core.Entities.Company", b =>
@@ -96,8 +179,8 @@ namespace HireTech.Repository.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 16, 11, 12, 19, 211, DateTimeKind.Utc).AddTicks(8893),
-                            CreatedById = "1fa17ad2-7e42-4e8d-8f7d-8c527d49129c",
+                            CreatedAt = new DateTime(2025, 8, 20, 9, 8, 50, 706, DateTimeKind.Utc).AddTicks(8174),
+                            CreatedById = "3c0232d9-5c20-4728-97cf-e4565918f271",
                             Description = "A sample tech company",
                             Industry = "IT",
                             Name = "Tech Corp",
@@ -141,6 +224,29 @@ namespace HireTech.Repository.Data.Migrations
                     b.HasIndex("VacancyId");
 
                     b.ToTable("Events", (string)null);
+                });
+
+            modelBuilder.Entity("HireTech.Core.Entities.Skill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.ToTable("Skills", (string)null);
                 });
 
             modelBuilder.Entity("HireTech.Core.Entities.User", b =>
@@ -221,20 +327,20 @@ namespace HireTech.Repository.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1fa17ad2-7e42-4e8d-8f7d-8c527d49129c",
+                            Id = "3c0232d9-5c20-4728-97cf-e4565918f271",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3fa593a9-773d-4ace-8c81-3db42a334093",
-                            CreatedAt = new DateTime(2025, 8, 16, 11, 12, 19, 203, DateTimeKind.Utc).AddTicks(2315),
+                            ConcurrencyStamp = "db015ed6-965d-4cff-8647-0ed6a14c9ab8",
+                            CreatedAt = new DateTime(2025, 8, 20, 9, 8, 50, 692, DateTimeKind.Utc).AddTicks(4905),
                             Email = "admin@hiretech.com",
                             EmailConfirmed = true,
                             FullName = "Admin User",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@HIRETECH.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMTnsn/ttSAMuIWBYb/vfdukxLCKb8usJoAWmXjoN0g9ouGHX5VnsqIYXy3jZa5rjA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEERwNRqTiRvDcnRAJvRq4DYD+15gve3lRl/wO7/PV4EyoIxkx4Ji5XCknJWG+W9QBw==",
                             PhoneNumberConfirmed = false,
                             Role = "Admin",
-                            SecurityStamp = "612f0a58-77a0-4059-ae21-dbaec37bf02a",
+                            SecurityStamp = "d60da504-4b6e-4d5a-8bd1-aae011dd6351",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -430,6 +536,12 @@ namespace HireTech.Repository.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("HireTech.Core.Entities.CandidateProfile", "CandidateProfile")
+                        .WithMany("Applications")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HireTech.Core.Entities.Vacancy", "Vacancy")
                         .WithMany("Applications")
                         .HasForeignKey("VacancyId")
@@ -438,7 +550,20 @@ namespace HireTech.Repository.Data.Migrations
 
                     b.Navigation("Candidate");
 
+                    b.Navigation("CandidateProfile");
+
                     b.Navigation("Vacancy");
+                });
+
+            modelBuilder.Entity("HireTech.Core.Entities.CandidateProfile", b =>
+                {
+                    b.HasOne("HireTech.Core.Entities.User", "User")
+                        .WithOne("CandidateProfile")
+                        .HasForeignKey("HireTech.Core.Entities.CandidateProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HireTech.Core.Entities.Company", b =>
@@ -465,6 +590,17 @@ namespace HireTech.Repository.Data.Migrations
                         .HasForeignKey("VacancyId");
 
                     b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("HireTech.Core.Entities.Skill", b =>
+                {
+                    b.HasOne("HireTech.Core.Entities.CandidateProfile", "CandidateProfile")
+                        .WithMany("Skills")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
                 });
 
             modelBuilder.Entity("HireTech.Core.Entities.Vacancy", b =>
@@ -537,6 +673,13 @@ namespace HireTech.Repository.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HireTech.Core.Entities.CandidateProfile", b =>
+                {
+                    b.Navigation("Applications");
+
+                    b.Navigation("Skills");
+                });
+
             modelBuilder.Entity("HireTech.Core.Entities.Company", b =>
                 {
                     b.Navigation("Vacancies");
@@ -544,6 +687,9 @@ namespace HireTech.Repository.Data.Migrations
 
             modelBuilder.Entity("HireTech.Core.Entities.User", b =>
                 {
+                    b.Navigation("CandidateProfile")
+                        .IsRequired();
+
                     b.Navigation("CompaniesCreated");
 
                     b.Navigation("EventsCreated");

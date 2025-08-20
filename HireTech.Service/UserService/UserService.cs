@@ -187,7 +187,7 @@ namespace HireTech.Service.UserService
                     return new ResponseDTO<object>
                     {
                         IsSuccess = false,
-                        Message = "Error while Register User",
+                        Message = $"Error while Register User {string.Join(", ", result.Errors.Select(e => e.Description))}",
                         ErrorCode = ErrorCodes.BadRequest,
                         //IsSuccess = true,
                         //Message = "Resgiter Successful ",

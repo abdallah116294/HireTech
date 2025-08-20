@@ -16,6 +16,8 @@ namespace HireTech.Core.Specifications
         }
         public VacancyWithCompanyDetailsSpecification(int id):base(v=>v.Id==id)
         {
+           
+            Includes.Add(v => v.Applications);
             Includes.Add(v => v.Company);
             Includes.Add(v => v.CreatedBy);
         }

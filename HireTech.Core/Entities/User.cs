@@ -18,5 +18,7 @@ namespace HireTech.Core.Entities
         //Vancy Created
         public ICollection<Vacancy> VacanciesCreated { get; set; }
         public ICollection<EventNote> EventsCreated { get; set; }
+        //Profile
+        public CandidateProfile CandidateProfile { get; set; }
     }
 }

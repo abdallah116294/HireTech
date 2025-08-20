@@ -1,6 +1,7 @@
 ﻿using HireTech.Uitilities.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HireTech.API.Controllers
 {
@@ -22,7 +23,25 @@ namespace HireTech.API.Controllers
         }
         protected string GetUserID()
         {
-            return User.Claims.FirstOrDefault(x=>x.Type=="role")?.Value??string.Empty;
+            return User.FindFirstValue("id");
+        }
+        protected  bool IsValidStatus(string status)
+        {
+            var validStatuses = new[] { "Open", "Closed", "On Hold" };
+            return validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase);
+        }
+        protected bool EnterValidStatus(string status)
+        {
+            var validStatuses = new[] { "Applied", "Under Review", "Interviewed", "Rejected", "Accepted" };
+            return validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase);
+        }
+        protected string ReturnStatus(int index)
+        {
+            var validStatuses = new[] { "Applied", "Under Review", "Interviewed", "Rejected", "Accepted" };
+            // if (index == validStatuses[index])
+            if (index <= validStatuses.Length)
+                return validStatuses[index];
+            return null;
         }
     }
 }

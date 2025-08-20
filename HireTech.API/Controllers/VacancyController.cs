@@ -7,6 +7,7 @@ using HireTech.Uitilities.DTO.Vacancy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HireTech.API.Controllers
@@ -33,6 +34,13 @@ namespace HireTech.API.Controllers
                 if(userId==null)
                     return Unauthorized("User Not Login ");
                 var vacancyRepo = _unitOfWork.Repository<Vacancy>();
+                if (IsValidStatus(dto.Status)==false)
+                    return CreateResponse(new ResponseDTO<object> 
+                    {
+                        IsSuccess=false,
+                        Message="Enter Valid Status",
+                        ErrorCode=ErrorCodes.NotFound,
+                    });
                 var mappedVacancy=_mapper.Map<Vacancy>(dto);
                 var vacancy = new Vacancy { 
                     Title = dto.Title,
@@ -44,6 +52,7 @@ namespace HireTech.API.Controllers
                     CreatedAt=DateTime.UtcNow,
                     CreatedById=userId,
                     Status=dto.Status,
+                     
                 };
 
                 await vacancyRepo.AddAsync(vacancy);
@@ -245,10 +254,69 @@ namespace HireTech.API.Controllers
                 });
             }
         }
-        private static bool IsValidStatus(string status)
+        [HttpGet("GetCandidatesApplication{id}")]
+        public async Task<IActionResult> GetCandidatesApplication (int id)
         {
-            var validStatuses = new[] { "Open", "Closed", "On Hold" };
-            return validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                if (id == null)
+                    return CreateResponse(new ResponseDTO<object> 
+                    {
+                        IsSuccess = false,
+                        Message="Id must not be null",
+                        ErrorCode=ErrorCodes.BadRequest,
+                    });
+
+
+                var spec = new ApplicationWithVacancySpecification(id);
+                var vacancyRepo = _unitOfWork.Repository<Application>();
+                var Applications = await vacancyRepo.GetAllWithSpecAsync(spec);
+
+              
+                if (Applications == null || !Applications.Any())
+                    return CreateResponse(new ResponseDTO<object>
+                    {
+                        IsSuccess = true,
+                        Message = "no Applications on this Vacancy yet ",
+                      
+                    });
+                var dtoList = Applications.Select(a => new ApplicationsOnVancancyDTO
+                {
+                    ApplicationId = a.Id,
+                    Status = a.Status,
+                    AppliedOn = a.AppliedOn,
+
+                    CandidateId = a.CandidateId,
+                    CandidateName = a.Candidate.FullName,
+                    CandidateEmail = a.Candidate.Email,
+
+                    VacancyId = a.VacancyId,
+                    VacancyTitle = a.Vacancy.Title,
+                    VacancyDescription = a.Vacancy.Description,
+
+                    CompanyId = a.Vacancy.CompanyId,
+                    CompanyName = a.Vacancy.Company.Name,
+
+                    DaysSinceApplication = (DateTime.Now-a.AppliedOn).Days,
+                }).ToList();
+                return CreateResponse(new ResponseDTO<IEnumerable<object>>
+                {
+                    IsSuccess = true,
+                    Message = "Get All Candidate that Applay on Vacancy",
+                    Data= dtoList,
+                });
+            }
+            catch(Exception ex)
+            {
+                return CreateResponse(new ResponseDTO<object>
+                {
+                    IsSuccess = false,
+                    Message = $"An Error Accured {ex}",
+                    ErrorCode = ErrorCodes.Excptions,
+                });
+            }
         }
+
+
     }
 }

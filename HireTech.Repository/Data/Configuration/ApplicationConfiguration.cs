@@ -16,17 +16,26 @@ namespace HireTech.Repository.Data.Configuration
         {
             entity.ToTable("Applications");
             entity.HasKey(p => p.Id);
+            //RelationShip with Vacancy entity 
          entity
      .HasOne(a => a.Vacancy)
      .WithMany(v => v.Applications)
      .HasForeignKey(a => a.VacancyId)
      .OnDelete(DeleteBehavior.Cascade);
-
-           entity
-                .HasOne(a => a.Candidate)
+            //RelationShip with Candidate entity 
+            entity
+                 .HasOne(a => a.Candidate)
                 .WithMany() 
                 .HasForeignKey(a => a.CandidateId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // Relation with CandidateProfile
+            entity.HasOne(a => a.CandidateProfile)
+                   .WithMany(cp => cp.Applications)
+                   .HasForeignKey(a => a.CandidateProfileId)
+                   .OnDelete(DeleteBehavior.Cascade);
+            //Forgen Keys 
+            entity.Property(a => a.CandidateProfileId).IsRequired();
+            entity.Property(a => a.VacancyId).IsRequired();
         }
     }
 }
