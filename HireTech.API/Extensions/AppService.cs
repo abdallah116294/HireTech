@@ -40,6 +40,7 @@ namespace HireTech.API.Extensions
             //Services
             service.AddScoped<IVacancyService, VacancyService>();
             service.AddScoped<ICompanyService, CompanyService>();
+            service.AddScoped<IApplicationService, ApplicationService>();
         }
     }
 }
