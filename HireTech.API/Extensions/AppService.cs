@@ -1,6 +1,7 @@
 ﻿using HireTech.Core.IRepositories;
 using HireTech.Core.IServices;
 using HireTech.Repository.Repositories;
+using HireTech.Service;
 using HireTech.Service.UserService;
 using HireTech.Uitilities.DTO.User;
 using HireTech.Uitilities.Helpers;
@@ -36,6 +37,8 @@ namespace HireTech.API.Extensions
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
+            //Services
+            service.AddScoped<IVacancyService, VacancyService>();
         }
     }
 }

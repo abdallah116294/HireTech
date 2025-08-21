@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HireTech.Core.Entities;
 using HireTech.Core.IRepositories;
+using HireTech.Core.IServices;
 using HireTech.Core.Specifications;
 using HireTech.Uitilities.DTO;
 using HireTech.Uitilities.DTO.Vacancy;
@@ -18,303 +19,65 @@ namespace HireTech.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IVacancyService _vacancyService;
 
-        public VacancyController(IUnitOfWork unitOfWork, IMapper mapper)
+        public VacancyController(IUnitOfWork unitOfWork, IMapper mapper, IVacancyService vacancyService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _vacancyService = vacancyService;
         }
         [Authorize(Roles = "RECRUITER")]
         [HttpPost("CreateVacancy")]
         public async Task<IActionResult> CreateVacancy([FromBody] CreateVacancyDTO dto)
         {
-            try
-            {
-                var userId = User.FindFirstValue("id");
-                if(userId==null)
-                    return Unauthorized("User Not Login ");
-                var vacancyRepo = _unitOfWork.Repository<Vacancy>();
-                if (IsValidStatus(dto.Status)==false)
-                    return CreateResponse(new ResponseDTO<object> 
-                    {
-                        IsSuccess=false,
-                        Message="Enter Valid Status",
-                        ErrorCode=ErrorCodes.NotFound,
-                    });
-                var mappedVacancy=_mapper.Map<Vacancy>(dto);
-                var vacancy = new Vacancy { 
-                    Title = dto.Title,
-                    Description=dto.Description,
-                    CompanyId=dto.CompanyId,
-                    Requirements = dto.Requirements,
-                    SalaryMax=dto.SalaryMax,
-                    SalaryMin=dto.SalaryMin,
-                    CreatedAt=DateTime.UtcNow,
-                    CreatedById=userId,
-                    Status=dto.Status,
-                     
-                };
-
-                await vacancyRepo.AddAsync(vacancy);
-               await _unitOfWork.CompleteAsync();
-
-                return CreateResponse(new ResponseDTO<object> 
-                {
-                    IsSuccess = true,
-                    Message="Creat Vacancy Succesfull",
-                    Data=vacancy,
-
-                });
-
-            }
-            catch (Exception ex) 
-            {
+            var userId = User.FindFirstValue("id");
+            if (userId == null)
+                return Unauthorized("User Not Login ");
+            if (IsValidStatus(dto.Status) == false)
                 return CreateResponse(new ResponseDTO<object>
                 {
-                    IsSuccess = true,
-                    Message = $"Error Accured {ex}",
-                   ErrorCode=ErrorCodes.Excptions
+                    IsSuccess = false,
+                    Message = "Enter Valid Status",
+                    ErrorCode = ErrorCodes.NotFound,
                 });
-            }
+            var result = await _vacancyService.CreateVacancy(dto, userId);
+            return CreateResponse(result);
         }
         [HttpGet("GetVacancyById{id}")]
         public async Task<IActionResult>GetVacancyById(int id)
         {
-            try
-            {
-                var spec = new VacancyWithCompanyDetailsSpecification(id);
-                var vacancyRepo = _unitOfWork.Repository<Vacancy>();
-                var vacancy =await vacancyRepo.GetByIdWithSpecAsync(spec);
-                if (vacancy == null)
-                    return CreateResponse(new ResponseDTO<object> 
-                    {
-                        IsSuccess=false,
-                        Message="no vacancy with this ID",
-                        ErrorCode=ErrorCodes.NotFound,
-                    });
-                var vacancyDTO = new VacancyResponseDTO 
-                {
-                    Id = vacancy.Id,
-                    Title = vacancy.Title,
-                    Description = vacancy.Description,
-                    Requirements = vacancy.Requirements,
-                    Status = vacancy.Status,
-                    SalaryMin = vacancy.SalaryMin,
-                    SalaryMax = vacancy.SalaryMax,
-                    CreatedAt = vacancy.CreatedAt,
-                    Company = new CompanyBasicInfoDTO
-                    {
-                        Id = vacancy.Company.Id,
-                        Name = vacancy.Company.Name,
-                        Industry = vacancy.Company.Industry,
-                        Website = vacancy.Company.Website,
-                        Description = vacancy.Company.Description
-                    },
-                    CreatedBy = new UserBasicInfoDTO
-                    {
-                        Id = vacancy.CreatedBy.Id,
-                        FullName = vacancy.CreatedBy.FullName,
-                        Email = vacancy.CreatedBy.Email,
-                        Role = vacancy.CreatedBy.Role
-                    }
-                };
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = true,
-                    Message = "Get Vacancy Succefull ",
-                    Data= vacancyDTO,
-                });
-            }
-            catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = false,
-                    Message = $"An Error Accured {ex}",
-                    ErrorCode = ErrorCodes.Excptions,
-                });
-            }
+            var result = await _vacancyService.GetVacancyById(id);
+            return CreateResponse(result);
         }
         [HttpGet("GetAllVacancies")]
         public async Task<IActionResult> GetAllVacancies()
         {
-            try
-            {
-                var spec = new VacancyWithCompanyDetailsSpecification();
-                var vacancyRepo = _unitOfWork.Repository<Vacancy>();
-                var Vacancies = await vacancyRepo.GetAllWithSpecAsync(spec);
-                if(Vacancies==null)
-                    return CreateResponse(new ResponseDTO<object>
-                    {
-                        IsSuccess = false,
-                        Message = "no vacancy found",
-                        ErrorCode = ErrorCodes.NotFound,
-                    });
-                var vacanciesMapped = _mapper.Map<IEnumerable<VacancyResponseDTO>>(Vacancies);
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = true,
-                    Message = "Get Vacancy Succefull ",
-                    Data = vacanciesMapped,
-                });
-            }
-            catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = false,
-                    Message = $"An Error Accured {ex}",
-                    ErrorCode = ErrorCodes.Excptions,
-                });
-            }
+            var result = await _vacancyService.GetAllVacancies();
+            return CreateResponse(result);
         }
         [Authorize(Roles = "RECRUITER")]
         [HttpPut("UpdateVacancy")]
         public async Task<IActionResult> UpdateVacancy([FromQuery] int id,[FromForm]UpdateVacancyDTO dto)
         {
-            try
+            if (dto == null)
             {
-                if (dto == null)
-                {
-                    return BadRequest("Update data cannot be null");
-                }
-                if (!string.IsNullOrEmpty(dto.Status) &&
-               !IsValidStatus(dto.Status))
-                {
-                    return BadRequest("Invalid status. Valid values are: Open, Closed, On Hold");
-                }
-                if (dto.SalaryMin.HasValue && dto.SalaryMax.HasValue &&
-                       dto.SalaryMin > dto.SalaryMax)
-                {
-                    return BadRequest("Minimum salary cannot be greater than maximum salary");
-                }
-                if (dto.CompanyId.HasValue)
-                {
-                    var companyExists = await _unitOfWork.Repository<Company>()
-                        .GetByIdAsync(dto.CompanyId.Value);
-                    if (companyExists == null)
-                    {
-                        return BadRequest($"Company with ID {dto.CompanyId} does not exist");
-                    }
-                }
-                var userID = User.FindFirstValue("id");
-                
-                var vacancyRepo = _unitOfWork.Repository<Vacancy>();
-                var spec = new VacancyWithCompanyDetailsSpecification(id);
-                var vacancy = await vacancyRepo.GetByIdWithSpecAsync(spec);
-                var mappedVacancy = _mapper.Map<VacancyResponseDTO>(vacancy);
-                if(mappedVacancy.CreatedBy.Id==userID)
-                {
-                    await _unitOfWork.Repository<Vacancy>().UpdateAsync(id, vacancy =>
-                    {
-                        // Only update fields that are provided (not null)
-                        if (!string.IsNullOrWhiteSpace(dto.Title))
-                            vacancy.Title = dto.Title;
-
-                        if (!string.IsNullOrWhiteSpace(dto.Description))
-                            vacancy.Description = dto.Description;
-
-                        if (!string.IsNullOrWhiteSpace(dto.Requirements))
-                            vacancy.Requirements = dto.Requirements;
-
-                        if (!string.IsNullOrWhiteSpace(dto.Status))
-                            vacancy.Status = dto.Status;
-
-                        if (dto.SalaryMin.HasValue)
-                            vacancy.SalaryMin = dto.SalaryMin;
-
-                        if (dto.SalaryMax.HasValue)
-                            vacancy.SalaryMax = dto.SalaryMax;
-
-                        if (dto.CompanyId.HasValue)
-                            vacancy.CompanyId = dto.CompanyId.Value;
-                    });
-                    await _unitOfWork.CompleteAsync();
-                    var vacancyAfterupdate = await vacancyRepo.GetByIdWithSpecAsync(spec);
-                    var mappedVacancyAfterupdate = _mapper.Map<VacancyResponseDTO>(vacancy);
-                    return CreateResponse(new ResponseDTO<object>
-                    {
-                        IsSuccess = true,
-                        Message = "Updat Vacancy Succesful",
-                        Data = mappedVacancyAfterupdate,
-                    });
-                }
-                else
-                {
-                    return Unauthorized("User Not Allowed ");
-                }
-               
-            }catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = false,
-                    Message = $"An Error Accured {ex}",
-                    ErrorCode = ErrorCodes.Excptions,
-                });
+                return BadRequest("Update data cannot be null");
             }
+            if (!string.IsNullOrEmpty(dto.Status) &&
+           !IsValidStatus(dto.Status))
+            {
+                return BadRequest("Invalid status. Valid values are: Open, Closed, On Hold");
+            }
+            var userID = User.FindFirstValue("id");
+            var result = await _vacancyService.UpdateVacancy(id,dto,userID);
+            return CreateResponse(result);
         }
         [HttpGet("GetCandidatesApplication{id}")]
         public async Task<IActionResult> GetCandidatesApplication (int id)
         {
-            try
-            {
-                if (id == null)
-                    return CreateResponse(new ResponseDTO<object> 
-                    {
-                        IsSuccess = false,
-                        Message="Id must not be null",
-                        ErrorCode=ErrorCodes.BadRequest,
-                    });
-
-
-                var spec = new ApplicationWithVacancySpecification(id);
-                var vacancyRepo = _unitOfWork.Repository<Application>();
-                var Applications = await vacancyRepo.GetAllWithSpecAsync(spec);
-
-              
-                if (Applications == null || !Applications.Any())
-                    return CreateResponse(new ResponseDTO<object>
-                    {
-                        IsSuccess = true,
-                        Message = "no Applications on this Vacancy yet ",
-                      
-                    });
-                var dtoList = Applications.Select(a => new ApplicationsOnVancancyDTO
-                {
-                    ApplicationId = a.Id,
-                    Status = a.Status,
-                    AppliedOn = a.AppliedOn,
-
-                    CandidateId = a.CandidateId,
-                    CandidateName = a.Candidate.FullName,
-                    CandidateEmail = a.Candidate.Email,
-
-                    VacancyId = a.VacancyId,
-                    VacancyTitle = a.Vacancy.Title,
-                    VacancyDescription = a.Vacancy.Description,
-
-                    CompanyId = a.Vacancy.CompanyId,
-                    CompanyName = a.Vacancy.Company.Name,
-
-                    DaysSinceApplication = (DateTime.Now-a.AppliedOn).Days,
-                }).ToList();
-                return CreateResponse(new ResponseDTO<IEnumerable<object>>
-                {
-                    IsSuccess = true,
-                    Message = "Get All Candidate that Applay on Vacancy",
-                    Data= dtoList,
-                });
-            }
-            catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = false,
-                    Message = $"An Error Accured {ex}",
-                    ErrorCode = ErrorCodes.Excptions,
-                });
-            }
+            var result = await _vacancyService.GetCandidatesApplication(id);
+            return CreateResponse(result);
         }
 
 
