@@ -15,8 +15,7 @@ namespace HireTech.Core.Specifications
         }
         public CompanyWithSpecification(int id):base(c=>c.Id==id)
         {
-            Includes.Add(c => c.Vacancies);
-           // Includes.Add(c => c.CreatedBy.FullName);
+            Includes.Add(c => c.Vacancies);  
         }
     }
 }

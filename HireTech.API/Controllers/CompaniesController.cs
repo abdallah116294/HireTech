@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HireTech.Core.Entities;
 using HireTech.Core.IRepositories;
+using HireTech.Core.IServices;
 using HireTech.Core.Specifications;
 using HireTech.Uitilities.DTO;
 using HireTech.Uitilities.DTO.Company;
@@ -16,137 +17,54 @@ namespace HireTech.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICompanyService _companyService;
 
-        public CompaniesController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CompaniesController(IUnitOfWork unitOfWork, IMapper mapper, ICompanyService companyService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _companyService = companyService;
         }
         [Authorize(Roles = "RECRUITER")]
         [HttpPost("CreateCompany")]
         public async Task<IActionResult> CreateCompany(CreateCompanyDTO dto) 
         {
-            try
-            {
-                var userId = User.FindFirstValue("id"); // logged-in user ID
-                Console.WriteLine(userId);
-                if (string.IsNullOrEmpty(userId))
-                    return Unauthorized(new { message = "User is not logged in" });
-
-                var companyRepo = _unitOfWork.Repository<Company>();
-                var mappedCompany =_mapper.Map<Company>(dto);
-                mappedCompany.CreatedAt = DateTime.UtcNow;
-
-                var company = new Company
-                {
-                    Name = dto.Name,
-                    Industry = dto.Industry,
-                    Website = dto.Website,
-                    Description = dto.Description,
-                    CreatedById = userId,
-                    CreatedAt=DateTime.UtcNow,
-                };
-                await companyRepo.AddAsync(company);
-                await _unitOfWork.CompleteAsync();
-                return CreateResponse(new ResponseDTO<object> 
-                {
-                  IsSuccess=true,
-                  Message="Add Company Succesful",
-                  Data=company,
-
-                });
-            }catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object>
-                {
-                    IsSuccess = false,
-                    Message = $"Error While Adding Company {ex}",
-                   ErrorCode=ErrorCodes.Excptions,
-                });
-            }
+            var userId = User.FindFirstValue("id"); // logged-in user ID
+            Console.WriteLine(userId);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User is not logged in" });
+            var result = await _companyService.CreateCompany(dto, userId);
+            return CreateResponse(result);
         }
         //View Company Card  //get By it's Id
         [Authorize(Roles = "CANDIDATE,RECRUITER")]
         [HttpGet("GetCompanyById{id}")]
         public async Task<IActionResult> GetCompanyDetailsById(int id) 
         {
-            try
-            {
-                var spec = new CompanyWithSpecification(id);
-                var companyRepo=_unitOfWork.Repository<Company>();
-                if (id == null)
-                    return CreateResponse(new ResponseDTO<object> {IsSuccess=false,Message="Id is Null",ErrorCode=ErrorCodes.BadRequest });
-                var companyById=await companyRepo.GetByIdWithSpecAsync(spec);
-                if (companyById == null)
-                    return CreateResponse(new ResponseDTO<object> {IsSuccess=false,Message="No Company Found",ErrorCode=ErrorCodes.NotFound});
-                return CreateResponse(new ResponseDTO<object> {IsSuccess=true,Message="Get Company Details Succesful",Data=companyById });
-            }
-            catch (Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object> { IsSuccess = false, Message = $"Error While Getting Company Details {ex}",ErrorCode=ErrorCodes.Excptions});
-            }
+            var result = await _companyService.GetCompanyDetailsById(id);
+            return CreateResponse(result);
         }
         //Update company Data 
         [HttpPut("EditCompanyData{id}")]
         public async Task<IActionResult> UpdateCompanyData(int id,[FromForm]UpdateCompanyDTO company)
         {
-            try
-            {
-                var companyRepo = _unitOfWork.Repository<Company>();
-                await companyRepo.UpdateAsync(id, entity => 
-                {
-                    if(!string.IsNullOrEmpty(company.Name))entity.Name=company.Name;
-                    if(!string.IsNullOrEmpty(company.Industry))entity.Industry=company.Industry;
-                    if(!string.IsNullOrEmpty(company.Description))entity.Description=company.Description;
-                      entity.CreatedAt=company.CreatedAt=DateTime.Now;
-                    //if(!string.IsNullOrEmpty(company.))
-                });
-                await _unitOfWork.CompleteAsync();
-                var ComapanyAfterUpdate = await companyRepo.GetByIdAsync(id);
-                return CreateResponse(new ResponseDTO<object> {IsSuccess=true,Message="Update Company Succesful",Data=ComapanyAfterUpdate });
-
-            }catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object> { IsSuccess =false, Message = $"Error While Update Company {ex}", ErrorCode=ErrorCodes.Excptions });
-            }
+            var result = await _companyService.UpdateCompanyData(id, company);
+            return CreateResponse(result);
+            
         }
         //Delete Company
         [HttpDelete("{id}")]
         public async Task<IActionResult>DeleteCompany(int id)
         {
-            try
-            {
-                var companyRepo = _unitOfWork.Repository<Company>();
-                if(id==null)
-                    return CreateResponse(new ResponseDTO<object> { IsSuccess = false, Message = "Id is Null", ErrorCode = ErrorCodes.BadRequest });
-
-                await companyRepo.DeleteAsync(id);
-                await _unitOfWork.CompleteAsync();
-                return CreateResponse(new ResponseDTO<object> { IsSuccess = true, Message = "Delete Company Succesful", });
-            }
-            catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object> { IsSuccess = false, Message = $"Error While Deleting Company {ex}", ErrorCode = ErrorCodes.Excptions });
-            }
+            var result=await _companyService.DeleteCompany(id);
+            return CreateResponse(result);
         }
         //Search by Name 
         [HttpGet("SearchByName")]
         public async Task<IActionResult> SearchByName([FromQuery] string? search)
         {
-            try
-            {
-                var spec = new CompanyWithSpecification();
-                var companyRepo= _unitOfWork.Repository<Company>();
-                var companies=await companyRepo.GetAllWithSpecAsync(spec);
-                var searchedCompany = companies.Where(c => c.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
-                if (searchedCompany == null)
-                    return CreateResponse(new ResponseDTO<object> { IsSuccess = true, Message = "No Company Found", ErrorCode = ErrorCodes.NotFound });
-            return CreateResponse(new ResponseDTO<object> { IsSuccess = true, Message = "Get Company", Data=searchedCompany });
-            }
-            catch(Exception ex)
-            {
-                return CreateResponse(new ResponseDTO<object> { IsSuccess = false, Message = "Error Accured", ErrorCode = ErrorCodes.Excptions });
-            }
+            var result = await _companyService.SearchByName(search);
+            return CreateResponse(result);
         }
     }
 }
