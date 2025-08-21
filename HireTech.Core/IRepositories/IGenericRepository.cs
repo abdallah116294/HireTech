@@ -21,7 +21,7 @@ namespace HireTech.Core.IRepositories
         // Set
         Task AddAsync(T entity);
         // Update 
-       // Task UpdateAsync(T entity);
+        Task UpdateAsync(T entity);
         Task UpdateAsync(int id, Action<T> updateAction);
         // Delete
         Task DeleteAsync(int id);

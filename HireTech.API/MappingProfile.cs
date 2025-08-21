@@ -51,6 +51,12 @@ namespace HireTech.API
                 .ForMember(dest => dest.ApplicationsCount, opt => opt.MapFrom(src => src.Applications.Count))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName ?? string.Empty))
                 ;
+            CreateMap<UpdateCandidateProfileDTO, CandidateProfile>()
+    .ForMember(dest => dest.Skills, opt => opt.Ignore())
+    .ForMember(dest => dest.Id, opt => opt.Ignore())
+    .ForMember(dest => dest.UserId, opt => opt.Ignore())
+     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            ;
         }
     }
 }

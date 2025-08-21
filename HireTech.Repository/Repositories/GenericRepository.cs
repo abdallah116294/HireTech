@@ -71,12 +71,25 @@ namespace HireTech.Repository.Repositories
             }
         }
 
+        public async Task UpdateAsync(T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            _context.Set<T>().Attach(entity);
+
+            // Set the state of the entity to Modified. 
+            // This will track all properties for changes.
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+
         //public Task UpdateAsync(T entity)
         //{
         //    _context.Set<T>().Update(entity);
         //   // throw new NotImplementedException();
         //}
 
-      
+
     }
 }
