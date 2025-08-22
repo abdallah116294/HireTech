@@ -13,5 +13,9 @@ namespace HireTech.Core.Specifications
         {
             Includes.Add(v => v.Applications);
         }
+        public VacancyWithApplicationsSpecification(DateTime fromDate, DateTime toDate):base(v => v.CreatedAt >= fromDate && v.CreatedAt <= toDate)
+        {
+            
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace HireTech.Core.IServices
         Task<ResponseDTO<object>> GetAllVacancies();
         Task<ResponseDTO<object>> GetCandidatesApplication(int id);
         Task<ResponseDTO<object>> UpdateVacancy(int id, UpdateVacancyDTO dto,string userId);
+        Task<ResponseDTO<object>> AccecptCandidate(string Status,string candidateId,int vacancyId, int ApplicationId);
     }
 }

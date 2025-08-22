@@ -80,6 +80,13 @@ namespace HireTech.API.Controllers
             return CreateResponse(result);
         }
 
-
+        [HttpPut("AddStatustCandidate")]
+        public async Task<IActionResult> AcceptCandidate(string Status,int vacancyId,string candidateId, int ApplicationId)
+        {
+            if (EnterValidStatus(Status) == false)
+                return BadRequest("Enter Valid Status");
+            var result = await _vacancyService.AccecptCandidate(Status, candidateId, vacancyId, ApplicationId);
+            return CreateResponse(result);
+        }
     }
 }

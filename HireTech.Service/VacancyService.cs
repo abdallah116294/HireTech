@@ -4,6 +4,7 @@ using HireTech.Core.IRepositories;
 using HireTech.Core.IServices;
 using HireTech.Core.Specifications;
 using HireTech.Uitilities.DTO;
+using HireTech.Uitilities.DTO.Application;
 using HireTech.Uitilities.DTO.Vacancy;
 using Org.BouncyCastle.Crypto;
 using System;
@@ -23,6 +24,60 @@ namespace HireTech.Service
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task<ResponseDTO<object>> AccecptCandidate(string Status, string candidateId, int vacancyId, int ApplicationId)
+        {
+            try
+            {
+                var applicationRepo = _unitOfWork.Repository<Application>();
+                var spec = new ApplicationWithVacancySpecification(candidateId,vacancyId, ApplicationId);
+                var CandidateApplications = await applicationRepo.GetByIdWithSpecAsync(spec);
+                if (CandidateApplications == null)
+                    return new ResponseDTO<object>
+                    {
+                        IsSuccess = false,
+                        Message = "Candidate Applications Empty",
+                        ErrorCode = ErrorCodes.NotFound,
+                    };
+                await applicationRepo.UpdateAsync( CandidateApplications.Id,entity => 
+                {
+                    entity.Status = Status;
+                });
+
+                await _unitOfWork.CompleteAsync();
+                var candidateApplications = new CandidateApplicationDTO
+                {
+                    ApplicationId = CandidateApplications.Id,
+                    Status = CandidateApplications.Status,
+                    VacancyId = CandidateApplications.VacancyId,
+                    VacancyTitle = CandidateApplications.Vacancy.Title,
+                    VacancyDescription = CandidateApplications.Vacancy.Description,
+                    VacancyStatus = CandidateApplications.Vacancy.Status,
+                    SalaryMin = CandidateApplications.Vacancy.SalaryMin,
+                    SalaryMax = CandidateApplications.Vacancy.SalaryMax,
+                    CompanyId = CandidateApplications.Vacancy.CompanyId,
+                    CompanyName = CandidateApplications.Vacancy.Company.Name,
+                    DaysSinceApplication = (DateTime.Now - CandidateApplications.AppliedOn).Days,
+                    SalaryRange = CandidateApplications.Vacancy.SalaryMin.HasValue && CandidateApplications.Vacancy.SalaryMax.HasValue ? $"{CandidateApplications.Vacancy.SalaryMin.Value} -{CandidateApplications.Vacancy.SalaryMax.Value}" : null,
+
+                };
+                return new ResponseDTO<object>
+                {
+                    IsSuccess = true,
+                    Message = "Accept Candidate Succesful",
+                    Data = candidateApplications,
+                };
+            }
+            catch(Exception ex)
+            {
+                return new ResponseDTO<object>
+                {
+                    IsSuccess = true,
+                    Message = $"Error Accured {ex}",
+                    ErrorCode = ErrorCodes.Excptions
+                };
+            }
         }
 
         public async Task<ResponseDTO<object>> CreateVacancy(CreateVacancyDTO dto, string userId)

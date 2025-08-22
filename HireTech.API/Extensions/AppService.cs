@@ -42,6 +42,8 @@ namespace HireTech.API.Extensions
             service.AddScoped<ICompanyService, CompanyService>();
             service.AddScoped<IApplicationService, ApplicationService>();
             service.AddScoped<IProfileService, ProfileService>();
+            service.AddScoped<IEventNoteService,EventNoteService>();
+            service.AddScoped<IDashboardService, DashboardService>();
         }
     }
 }

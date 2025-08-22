@@ -2,6 +2,7 @@
 using HireTech.Core.Entities;
 using HireTech.Uitilities.DTO.Application;
 using HireTech.Uitilities.DTO.Company;
+using HireTech.Uitilities.DTO.EventNote;
 using HireTech.Uitilities.DTO.Profile;
 using HireTech.Uitilities.DTO.Vacancy;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,9 @@ namespace HireTech.API
     .ForMember(dest => dest.Id, opt => opt.Ignore())
     .ForMember(dest => dest.UserId, opt => opt.Ignore())
      .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            ;
+            //EventNote
+            CreateMap<EventNoteRequestDTO, EventNote>().ReverseMap();
+            CreateMap<EventNote, EventNoteResponseDto>().ReverseMap();
         }
     }
 }

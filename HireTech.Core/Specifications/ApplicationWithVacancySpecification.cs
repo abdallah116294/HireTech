@@ -29,5 +29,25 @@ namespace HireTech.Core.Specifications
             Includes.Add(p => p.Vacancy);
             Includes.Add(p => p.Vacancy.Company);
         }
+        public ApplicationWithVacancySpecification(string candidateId, int vacancyId,int ApplicationId) : 
+            base(a=>a.CandidateId==candidateId&&a.VacancyId==vacancyId&&a.Id==ApplicationId) 
+        {
+            Includes.Add(p => p.Candidate);
+            Includes.Add(p => p.Vacancy);
+            Includes.Add(p => p.Vacancy.Company);
+        }
+        public ApplicationWithVacancySpecification(DateTime fromDate, DateTime toDate)
+            :base(a=>a.AppliedOn>=fromDate&&a.AppliedOn<=toDate)
+        {
+            Includes.Add(a => a.Candidate);
+            Includes.Add(a => a.Vacancy);
+            Includes.Add(a => a.CandidateProfile);
+        }
+        public ApplicationWithVacancySpecification()
+        {
+            Includes.Add(a => a.Candidate);
+            Includes.Add(a => a.Vacancy);
+            Includes.Add(a => a.CandidateProfile);
+        }
     }
 }
