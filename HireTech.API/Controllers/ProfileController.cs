@@ -53,6 +53,17 @@ namespace HireTech.API.Controllers
             return CreateResponse(result);
           
         }
+        [Authorize(Roles= "RECRUITER")]
+        [HttpGet("get-candicate-profile")]
+        public async Task<IActionResult> GetCandidateProfile(string id)
+        {
+            var userId = GetUserID();
+            if (userId == null)
+                return Unauthorized("Please Login to view Profile Details");
+            var result = await _profileService.GetProfile(id);
+            return CreateResponse(result);
+
+        }
         [Authorize(Roles = "CANDIDATE")]
         [HttpPut("UpdateProfile")]
         public async Task<IActionResult> UpdateProfile(UpdateCandidateProfileDTO dto)
@@ -63,5 +74,6 @@ namespace HireTech.API.Controllers
             var result = await _profileService.UpdateProfile(dto, userId);
             return CreateResponse(result);
         }
+
     }
 }
