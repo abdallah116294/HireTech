@@ -19,6 +19,7 @@ namespace HireTech.API.Controllers
                 ErrorCodes.BadRequest=>BadRequest(response),
                 ErrorCodes.UnAuthorized=>Unauthorized(response),
                 ErrorCodes.Excptions=>StatusCode(StatusCodes.Status500InternalServerError,response),
+                _ => response.IsSuccess ? Ok(response) : BadRequest(response)
             };
         }
         protected string GetUserID()

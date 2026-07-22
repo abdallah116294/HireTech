@@ -57,7 +57,8 @@ namespace HireTech.Service
                     return new ResponseDTO<object>
                     {
                         IsSuccess = false,
-                        Message = "Candidate has already applied to this vacancy"
+                        Message = "Candidate has already applied to this vacancy",
+                        ErrorCode = ErrorCodes.BadRequest
                     };
                   
                 }
@@ -66,7 +67,8 @@ namespace HireTech.Service
                     return new ResponseDTO<object>
                     {
                         IsSuccess = false,
-                        Message = "Invalid status. Valid values are: Applied, Under Review, Interviewed, Rejected, Accepted"
+                        Message = "Invalid status. Valid values are: Applied, Under Review, Interviewed, Rejected, Accepted",
+                        ErrorCode = ErrorCodes.BadRequest
                     };
                    
                 }
@@ -101,7 +103,7 @@ namespace HireTech.Service
             {
                 return new ResponseDTO<object>
                 {
-                    IsSuccess = true,
+                    IsSuccess = false,
                     Message = $"Error Accured {ex}",
                     ErrorCode = ErrorCodes.Excptions
                 };
@@ -111,7 +113,7 @@ namespace HireTech.Service
         {
             var validStatuses = new[] { "Applied", "Under Review", "Interviewed", "Rejected", "Accepted" };
             // if (index == validStatuses[index])
-            if (index <= validStatuses.Length)
+            if (index >= 0 && index < validStatuses.Length)
                 return validStatuses[index];
             return null;
         }

@@ -66,5 +66,13 @@ namespace HireTech.API.Controllers
             var result = await _companyService.SearchByName(search);
             return CreateResponse(result);
         }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllCompanies()
+        {
+            var result = await _companyService.GetAllCompanies();
+            return Ok(result);
+        }
+
     }
 }

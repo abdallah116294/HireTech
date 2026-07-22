@@ -135,12 +135,31 @@ namespace HireTech.Service
                 var companyRepo = _unitOfWork.Repository<Company>();
                 var companies = await companyRepo.GetAllWithSpecAsync(spec);
                 var searchedCompany = companies.Where(c => c.Name.Contains(Name, StringComparison.OrdinalIgnoreCase));
-                //CompanyDetailsDTO companyBySearch = CompanyMappingExtensions.toResponse(searchedCompany);
-              ////  var mappedCompany = _mapper.Map <IEnumerable<CompanyDetailsDTO>>(searchedCompany);
-                if (searchedCompany == null)
-                    return new ResponseDTO<object> { IsSuccess = true, Message = "No Company Found", ErrorCode = ErrorCodes.NotFound };
-                Console.WriteLine(searchedCompany);
-                return new ResponseDTO<object> { IsSuccess = true, Message = "Get Company", Data = searchedCompany };
+                var searchedCompanies = companies
+               .Where(c => c.Name.Contains(Name, StringComparison.OrdinalIgnoreCase))
+               .ToList(); // تحويلها لـ List للتأكد من التنفيذ
+
+                if (!searchedCompanies.Any())
+                {
+                    return new ResponseDTO<object>
+                    {
+                        IsSuccess = false,
+                        Message = "No Company Found",
+                        ErrorCode = ErrorCodes.NotFound
+                    };
+                }
+
+                // 2. تحويل البيانات إلى DTO (سواء عبر AutoMapper أو Extension Method)
+                var mappedCompanies = _mapper.Map<IEnumerable<CompanyDetailsDTO>>(searchedCompanies);
+
+                // 3. إرجاع الـ DTO المجهز
+                return new ResponseDTO<object>
+                {
+                    IsSuccess = true,
+                    Message = "Get Company Successfully",
+                    Data = mappedCompanies
+                };
+
             }
             catch(Exception ex)
             {
@@ -180,5 +199,47 @@ namespace HireTech.Service
                 };
             }
         }
+
+        public async Task<ResponseDTO<object>> GetAllCompanies()
+        {
+            try
+            {
+                var spec = new CompanyWithSpecification();
+                var companyRepo = _unitOfWork.Repository<Company>();
+                var companies = await companyRepo.GetAllWithSpecAsync(spec);
+
+                if (companies == null || !companies.Any())
+                {
+                    return new ResponseDTO<object>
+                    {
+                        IsSuccess = true,
+                        Message = "No Companies Found",
+                        Data = new List<CompanyDetailsDTO>(),
+                        ErrorCode = ErrorCodes.NotFound
+                    };
+                }
+
+                // تحويل القائمة إلى DTO لتفادي العلاقات الدائرية
+                var mappedCompanies = _mapper.Map<IEnumerable<CompanyDetailsDTO>>(companies);
+
+                return new ResponseDTO<object>
+                {
+                    IsSuccess = true,
+                    Message = "Companies retrieved successfully",
+                    Data = mappedCompanies
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<object>
+                {
+                    IsSuccess = false,
+                    Message = $"Error occurred: {ex.Message}",
+                    ErrorCode = ErrorCodes.Excptions
+                };
+            }
+        }
+
+
     }
 }

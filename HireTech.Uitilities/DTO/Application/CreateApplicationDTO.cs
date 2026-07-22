@@ -9,8 +9,8 @@ namespace HireTech.Uitilities.DTO.Application
 {
     public class CreateApplicationDTO
     {
-        [Required]
-        public string CandidateId { get; set; }
+        
+        public string? CandidateId { get; set; }
 
         [Required]
         public int VacancyId { get; set; }

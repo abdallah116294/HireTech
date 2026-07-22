@@ -15,5 +15,6 @@ namespace HireTech.Core.IServices
         Task<ResponseDTO<object>> UpdateCompanyData(int id, UpdateCompanyDTO company);
         Task<ResponseDTO<object>> DeleteCompany(int id);
         Task<ResponseDTO<object>> SearchByName(string Name);
+        Task<ResponseDTO<object>> GetAllCompanies();
     }
 }
