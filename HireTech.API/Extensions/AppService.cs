@@ -20,7 +20,7 @@ namespace HireTech.API.Extensions
             // Unit of work
             service.AddScoped<IUnitOfWork, UnitOfWork>();
             //AutoMapper
-            service.AddAutoMapper(typeof(MappingProfile));
+            service.AddAutoMapper(typeof(MappingProfile).Assembly);
             //User Repository
             service.AddScoped<IUserRepository, UserRepository>();
             service.Configure<EmailConfiguration>(configuration.GetSection("EmialConfiguration"));

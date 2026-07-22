@@ -20,9 +20,11 @@ namespace HireTech.API
             CreateMap<Company, CreateCompanyDTO>().ReverseMap();
             CreateMap<Company, UpdateCompanyDTO>().ReverseMap();
             CreateMap<Company, CompanyBasicInfoDTO>();
+            CreateMap<Company, CompanyDetailsDTO>();
             //Vacancy
             CreateMap<Vacancy,CreateVacancyDTO>().ReverseMap();
             CreateMap<Vacancy, VacancyResponseDTO>();
+            CreateMap<Vacancy, VacancyDto>();
             //Application
             CreateMap<Application, CandidateApplicationDTO>()
                             .ForMember(dest => dest.ApplicationId, opt => opt.MapFrom(src => src.Id))

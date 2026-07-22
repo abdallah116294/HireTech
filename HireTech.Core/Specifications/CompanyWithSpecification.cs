@@ -12,10 +12,12 @@ namespace HireTech.Core.Specifications
      public   CompanyWithSpecification()
         {
             Includes.Add(c => c.Vacancies);
+            Includes.Add(c => c.CreatedBy);
         }
         public CompanyWithSpecification(int id):base(c=>c.Id==id)
         {
-            Includes.Add(c => c.Vacancies);  
+            Includes.Add(c => c.Vacancies);
+            Includes.Add(c => c.CreatedBy);
         }
         public CompanyWithSpecification(DateTime fromDate, DateTime toDate) :base(c => c.CreatedAt >= fromDate && c.CreatedAt <= toDate)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HireTech.Uitilities.DTO.Vacancy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,8 @@ namespace HireTech.Uitilities.DTO.Company
         public string Website { get; set; }
         public string Description { get; set; }
         public string  CreateById { get; set; }
-      //  public string CreateBy { get; set; }
+        public UserBasicInfoDTO CreatedBy { get; set; }
+        //  public string CreateBy { get; set; }
         public List<VacancyDto> Vacancies { get; set; }
     }
     public class VacancyDto

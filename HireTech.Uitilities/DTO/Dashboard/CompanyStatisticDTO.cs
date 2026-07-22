@@ -11,8 +11,6 @@ namespace HireTech.Uitilities.DTO.Dashboard
         public int TotalCompanies { get; set; }
         public int ActiveCompanies { get; set; }
         public List<IndustryCountDto> CompaniesByIndustry { get; set; }
-        //public List<MonthlyCompanyDto> CompaniesCreatedByMonth { get; set; }
-        //public List<TopCompanyDto> TopCompaniesByVacancies { get; set; }
-        //public List<TopCompanyDto> TopCompaniesByApplications { get; set; }
+       
     }
 }

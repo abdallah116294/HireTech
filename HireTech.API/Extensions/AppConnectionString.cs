@@ -11,7 +11,7 @@ namespace HireTech.API.Extensions
         {
             service.AddDbContext<HireTechDbContext>(options => 
             {
-                options.UseSqlServer(configuration.GetConnectionString("HireTechConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("HireTechServerConnection"));
             });
             service.AddIdentityCore<User>(u =>
             {

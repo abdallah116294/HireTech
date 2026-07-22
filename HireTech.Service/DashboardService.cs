@@ -112,9 +112,9 @@ namespace HireTech.Service
                         TotalCompanies = 0,
                         ActiveCompanies = 0,
                         CompaniesByIndustry = new List<IndustryCountDto>(),
-                        CompaniesCreatedByMonth = new List<MonthlyCompanyDto>(),
-                        TopCompaniesByVacancies = new List<TopCompanyDto>(),
-                        TopCompaniesByApplications = new List<TopCompanyDto>()
+                        //CompaniesCreatedByMonth = new List<MonthlyCompanyDto>(),
+                        //TopCompaniesByVacancies = new List<TopCompanyDto>(),
+                        //TopCompaniesByApplications = new List<TopCompanyDto>()
                     };
                     return new ResponseDTO<object> {
                         IsSuccess=true,

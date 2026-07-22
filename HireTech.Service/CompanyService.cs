@@ -96,23 +96,24 @@ namespace HireTech.Service
                 Console.WriteLine($"Company By ID {companyById}");
                 if (companyById == null)
                     return new ResponseDTO<object> { IsSuccess = false, Message = "No Company Found", ErrorCode = ErrorCodes.NotFound };
-                var dto = new CompanyDetailsDTO 
-                {
-                    Id=companyById.Id,
-                    Name=companyById.Name,
-                    CreateById=companyById.CreatedById,
-                    Description=companyById.Description,
-                    Website=companyById.Website,
-                    Industry= companyById.Industry,
-                    Vacancies=companyById.Vacancies.Select(v=> new VacancyDto 
-                    {
-                        Id=v.Id,
-                        Title=v.Title,
-                        Description =v.Description,
-                        Requirements=v.Requirements,
-                        Status = v.Status,
-                    }).ToList()
-                };
+                CompanyDetailsDTO dto = CompanyMappingExtensions.toResponse(companyById);
+                //var dto = new CompanyDetailsDTO 
+                //{
+                //    Id=companyById.Id,
+                //    Name=companyById.Name,
+                //    CreateById=companyById.CreatedById,
+                //    Description=companyById.Description,
+                //    Website=companyById.Website,
+                //    Industry= companyById.Industry,
+                //    Vacancies=companyById.Vacancies.Select(v=> new VacancyDto 
+                //    {
+                //        Id=v.Id,
+                //        Title=v.Title,
+                //        Description =v.Description,
+                //        Requirements=v.Requirements,
+                //        Status = v.Status,
+                //    }).ToList()
+                //};
                 return new ResponseDTO<object> { IsSuccess = true, Message = "Get Company Details Succesful", Data = dto };
             }
             catch(Exception ex)
@@ -134,8 +135,11 @@ namespace HireTech.Service
                 var companyRepo = _unitOfWork.Repository<Company>();
                 var companies = await companyRepo.GetAllWithSpecAsync(spec);
                 var searchedCompany = companies.Where(c => c.Name.Contains(Name, StringComparison.OrdinalIgnoreCase));
+                //CompanyDetailsDTO companyBySearch = CompanyMappingExtensions.toResponse(searchedCompany);
+              ////  var mappedCompany = _mapper.Map <IEnumerable<CompanyDetailsDTO>>(searchedCompany);
                 if (searchedCompany == null)
                     return new ResponseDTO<object> { IsSuccess = true, Message = "No Company Found", ErrorCode = ErrorCodes.NotFound };
+                Console.WriteLine(searchedCompany);
                 return new ResponseDTO<object> { IsSuccess = true, Message = "Get Company", Data = searchedCompany };
             }
             catch(Exception ex)
